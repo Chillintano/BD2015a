@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151009211701) do
+ActiveRecord::Schema.define(version: 20151012192106) do
 
   create_table "assignments", force: true do |t|
     t.integer "repair_object_id", null: false
@@ -51,15 +51,15 @@ ActiveRecord::Schema.define(version: 20151009211701) do
   end
 
   create_table "transactions", force: true do |t|
-    t.integer  "client_id",                       null: false
-    t.integer  "repair_object_id",                null: false
+    t.integer  "client_id",                        null: false
+    t.integer  "repair_object_id",                 null: false
     t.integer  "product_id"
     t.integer  "volume"
-    t.integer  "value",                           null: false
-    t.boolean  "income",           default: true
+    t.integer  "value",                            null: false
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "income",           default: false
   end
 
   create_table "workers", force: true do |t|

@@ -9,6 +9,8 @@ class GenerationController < ApplicationController
         "products" => 30,
         "objectMinDuration" => 3,
         "objectMaxDuration" => 15,
+        "objectPaymentMin" => 100000,
+        "objectPaymentMax" => 10000000,
         "minDealPayment" => 20000,
         "maxDealPayment" => 200000,
         "minMonthPayment" => 10000,
@@ -24,6 +26,9 @@ class GenerationController < ApplicationController
         "workersMinDuration" => 1,
         "workersMaxDuration" => 8,
         "databaseDuration" => 60,
+        "reportPeriod" => 12,
+        "desiredValue" => 10,
+        "isGeneratingPercent" => 1,
         "minObjectsInReportPeriod" => 3
     }
     a=[1,2,3,4,5]
@@ -143,6 +148,8 @@ class GenerationController < ApplicationController
   end
 
   def genTransactions(options)
+    Transaction.delete_all
+
     products_db = RepairProduct.all.order('id')
     products_db.each do |t|
       payment_parts = 1 + rand(5)
@@ -175,6 +182,200 @@ class GenerationController < ApplicationController
         end
       else
         Transaction.create(income: false, client_id: t.repair_object.client.id, repair_object_id: t.repair_object.id, product_id: nil, value: t.pay, volume: nil, description: "One-time payment for " + t.worker.name)
+      end
+    end
+
+    objects_db = RepairObject.all.order('id')
+    objects_db.each do |t|
+      randPay = options['objectPaymentMin'] + rand(options['objectPaymentMax'] - options['objectPaymentMin'])
+      Transaction.create(income: true, client_id: t.client.id, repair_object_id: t.id, product_id: nil, value: randPay, volume: nil, description: "Income, " + t.description)
+    end
+
+    reportDateStart = Time.new(Time.now.year - options['reportPeriod']/12, ((12 + Time.now.month - options['reportPeriod']%12)%12), 1 + rand(28))
+    if (Time.now.month - options['reportPeriod']%12 >=0)
+      reportDateStart = Time.new(reportDateStart.year-1,reportDateStart.month, reportDateStart.day)
+    end
+
+    selected_objects = RepairObject.where("date_finished >= :date", {date:reportDateStart}).order('id')
+
+    income_a = Array.new
+    expences_a = Array.new
+    balance = Array.new
+    total = Array.new
+    a=0
+    b=0
+
+    selected_objects.each do |t|
+      income = t.transactions.where(income: true).sum("value")
+      expences = t.transactions.where(income: false).sum("value")
+      income_a << income
+      expences_a << expences
+      balance << income - expences
+      total << income + expences
+    end
+
+    puts 100.0*balance.sum/total.sum
+    puts income_a.sum
+    puts expences_a.sum
+    puts balance.sum
+    puts total.sum
+
+    if (options['isGeneratingPercent'] == 1)
+      if  ( ((100.0*balance.sum)/total.sum) > options['desiredValue'])
+        difference = ((1.0 - (1.0*options['desiredValue'])/100)*income_a.sum - (1.0 + (1.0*options['desiredValue'])/100)*expences_a.sum)/(1.0 - (1.0*options['desiredValue'])/100)
+        puts difference
+
+
+        while (difference>0)
+          selected_objects.each_with_index do |t,index|
+
+            if (income_a[index]>0)
+              diff = [income_a[index]*0.1,difference].min
+              difference -= diff
+              income_a[index] -= diff
+              puts difference
+            end
+
+            if (difference<=0)
+              break
+            end
+
+          end
+        end
+
+        selected_objects.each_with_index do |t,index|
+          a = Transaction.where(income: true, repair_object_id:t.id).first
+          a.update(value: income_a[index])
+        end
+
+        balance = Array.new
+        total = Array.new
+
+        selected_objects.each do |t|
+          income = t.transactions.where(income: true).sum("value")
+          expences = t.transactions.where(income: false).sum("value")
+          balance << income - expences
+          total << income + expences
+        end
+
+        puts 1.0*balance.sum/total.sum
+
+      else
+        difference = -((1.0 - (1.0*options['desiredValue'])/100)*income_a.sum - (1.0 + (1.0*options['desiredValue'])/100)*expences_a.sum)/(1.0 - (1.0*options['desiredValue'])/100)
+        puts difference
+
+
+        while (difference>0)
+          selected_objects.each_with_index do |t,index|
+
+            if (income_a[index]>0)
+              diff = [income_a[index]*0.1,difference].min
+              difference -= diff
+              income_a[index] += diff
+              puts difference
+            end
+
+            if (difference<=0)
+              break
+            end
+
+          end
+        end
+
+        selected_objects.each_with_index do |t,index|
+          a = Transaction.where(income: true, repair_object_id:t.id).first
+          a.update(value: income_a[index])
+        end
+
+        balance = Array.new
+        total = Array.new
+
+        selected_objects.each do |t|
+          income = t.transactions.where(income: true).sum("value")
+          expences = t.transactions.where(income: false).sum("value")
+          balance << income - expences
+          total << income + expences
+        end
+
+        puts 1.0*balance.sum/total.sum
+
+      end
+
+    else
+      if  ( balance.sum > options['desiredValue'])
+        difference =  balance.sum - options['desiredValue']
+        puts difference
+
+
+        while (difference>0)
+          selected_objects.each_with_index do |t,index|
+
+            if (income_a[index]>0)
+              diff = [income_a[index]*0.1,difference].min
+              difference -= diff
+              income_a[index] -= diff
+              puts difference
+            end
+
+            if (difference<=0)
+              break
+            end
+
+          end
+        end
+
+        selected_objects.each_with_index do |t,index|
+          a = Transaction.where(income: true, repair_object_id:t.id).first
+          a.update(value: income_a[index])
+        end
+
+        balance = Array.new
+
+        selected_objects.each do |t|
+          income = t.transactions.where(income: true).sum("value")
+          expences = t.transactions.where(income: false).sum("value")
+          balance << income - expences
+        end
+
+        puts balance.sum
+
+      else
+        difference = options['desiredValue'] - balance.sum
+        puts difference
+
+
+        while (difference>0)
+          selected_objects.each_with_index do |t,index|
+
+            if (income_a[index]>0)
+              diff = [income_a[index]*0.1,difference].min
+              difference -= diff
+              income_a[index] += diff
+              puts difference
+            end
+
+            if (difference<=0)
+              break
+            end
+
+          end
+        end
+
+        selected_objects.each_with_index do |t,index|
+          a = Transaction.where(income: true, repair_object_id:t.id).first
+          a.update(value: income_a[index])
+        end
+
+        balance = Array.new
+
+        selected_objects.each do |t|
+          income = t.transactions.where(income: true).sum("value")
+          expences = t.transactions.where(income: false).sum("value")
+          balance << income - expences
+        end
+
+        puts balance.sum
+
       end
     end
 
