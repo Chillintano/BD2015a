@@ -1,0 +1,86 @@
+<h1>Настройки</h1>
+
+<%= form_tag("/saveOptions", method: "post") do %>
+    <table>
+      <tr>
+        <td>Количество клиентов:</td>
+        <td><input name="client_count" type="text" value="<%= $client_count %>" /></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Количество рабочих:</td>
+        <td><input name="workers_count" type="text" value="<%= $workers_count %>" /></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Количество материалов:</td>
+        <td><input name="resources_min" type="text" value="<%= $resources_min %>" /></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Минимальное число объектов:</td>
+        <td><input name="object_min" type="text" value="<%= $object_min %>" /></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Стоимость работ по 1 объекту:</td>
+        <td>от <input name="cost_min" type="text" value="<%= $cost_min %>" /></td>
+        <td>до <input name="cost_max" type="text" value="<%= $cost_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Диапазон по сдельной:</td>
+        <td>от <input name="deal_payment_min" type="text" value="<%= $deal_payment_min %>" /></td>
+        <td>до <input name="deal_payment_min" type="text" value="<%= $deal_payment_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Диапазон по месячной:</td>
+        <td>от <input name="month_payment_min" type="text" value="<%= $month_payment_min %>" /></td>
+        <td>до <input name="month_payment_min" type="text" value="<%= $month_payment_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Диапазон по сдельной:</td>
+        <td>от <input name="deal_payment_min" type="text" value="<%= $deal_payment_min %>" /></td>
+        <td>до <input name="deal_payment_min" type="text" value="<%= $deal_payment_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Кол-во необходимых материалов на объект:</td>
+        <td>от <input name="resources_count_min" type="text" value="<%= $resources_count_min %>" /></td>
+        <td>до <input name="resources_count_max" type="text" value="<%= $resources_count_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Объем материалов:</td>
+        <td>от <input name="resources_total_min" type="text" value="<%= $resources_total_min %>" /></td>
+        <td>до <input name="resources_total_max" type="text" value="<%= $resources_total_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Цена материала:</td>
+        <td>от <input name="resources_price_min" type="text" value="<%= $resources_price_min %>" /></td>
+        <td>до <input name="resources_price_max" type="text" value="<%= $resources_price_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Диапазон рабочих на один объект:</td>
+        <td>от <input name="workers_min" type="text" value="<%= $workers_min %>" /></td>
+        <td>до <input name="workers_max" type="text" value="<%= $workers_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Диапазон времени рабочих на один объект:</td>
+        <td>от <input name="workers_time_min" type="text" value="<%= $workers_time_min %>" /></td>
+        <td>до <input name="workers_time_max" type="text" value="<%= $workers_time_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Продолжительность работ по объекту:</td>
+        <td>от <input name="time_min" type="text" value="<%= $time_min %>" /></td>
+        <td>до <input name="time_max" type="text" value="<%= $time_max %>" /></td>
+      </tr>
+      <tr>
+        <td>Временной охват данных:</td>
+        <td><input name="data_time_total" type="text" value="<%= $data_time_total %>" /></td>
+        <td></td>
+      </tr>
+    </table>
+    <%= submit_tag("Сохранить") %>
+<% end %>
+
+<br /><br />
+
+<%= link_to "На главную", :controller => 'application', :action => 'index' %>

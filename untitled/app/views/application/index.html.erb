@@ -1,0 +1,25 @@
+<h1>Генерация данных</h1>
+
+<%= form_tag("/generate", method: "post") do %>
+
+    <table>
+      <tr>
+        <td>Период времени (в месяцах):</td>
+        <td><input name="time_total" type="text" value="<%= $time_total %>" /></td>
+      </tr>
+      <tr>
+        <td><%= radio_button_tag("state", 0, !!($state == 0)) %> фиксированной суммой </td>
+        <td><%= radio_button_tag("state", 1, !!($state == 1)) %> процент прибыли</td>
+      </tr>
+      <tr>
+        <td>Значение:</td>
+        <td><input name="value" type="text" value="<%= $value %>" /></td>
+      </tr>
+    </table>
+
+    <%= submit_tag("Генерировать данные") %>
+<% end %>
+
+<br /><br />
+
+<%= link_to "В настройки", :controller => 'application', :action => 'options' %>

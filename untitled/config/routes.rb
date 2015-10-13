@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
   get 'generation' => 'generation#genAll'
+
+  root 'application#index'
+  get 'options' => 'application#options'
+  post 'saveOptions' => 'application#saveOptions'
+  post 'generate' => 'application#generate'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

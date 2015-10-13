@@ -3,35 +3,33 @@ class GenerationController < ApplicationController
   def genAll()
     srand(1) #remove this in release, it keeps random from being random
     options = {
-        "clients" => 5,
-        "workers" => 10,
-        "objects" => 15,
-        "products" => 30,
-        "objectMinDuration" => 3,
-        "objectMaxDuration" => 15,
-        "objectPaymentMin" => 100000,
-        "objectPaymentMax" => 10000000,
-        "minDealPayment" => 20000,
-        "maxDealPayment" => 200000,
-        "minMonthPayment" => 10000,
-        "maxMonthPayment" => 35000,
-        "productsPerObjectMin" => 5,
-        "productsPerObjectMax" => 15,
-        "productVolumeMin" => 5,
-        "productVolumeMax" => 300,
-        "productPriceMin" => 10,
-        "productPriceMax" => 500,
-        "workersPerObjectMin" => 4,
-        "workersPerObjectMax" => 20,
-        "workersMinDuration" => 1,
-        "workersMaxDuration" => 8,
-        "databaseDuration" => 60,
-        "reportPeriod" => 12,
-        "desiredValue" => 10,
-        "isGeneratingPercent" => 1,
-        "minObjectsInReportPeriod" => 3
+        "clients" => $client_count,
+        "workers" => $workers_count,
+        "objects" => $object_min,
+        "products" => $resources_min, #new
+        "objectMinDuration" => $time_min,
+        "objectMaxDuration" => $time_max,
+        "objectPaymentMin" => $cost_min,
+        "objectPaymentMax" => $cost_max,
+        "minDealPayment" => $deal_payment_min, #new
+        "maxDealPayment" => $deal_payment_max,
+        "minMonthPayment" => $month_payment_min, #new
+        "maxMonthPayment" => $month_payment_max,
+        "productsPerObjectMin" => $resources_count_min,
+        "productsPerObjectMax" => $resources_count_max,
+        "productVolumeMin" => $resources_total_min,
+        "productVolumeMax" => $resources_total_max,
+        "productPriceMin" => $resources_price_min,
+        "productPriceMax" => $resources_price_max,
+        "workersPerObjectMin" => $workers_min, #new
+        "workersPerObjectMax" => $workers_max,
+        "workersMinDuration" => $workers_time_min, #new
+        "workersMaxDuration" => $workers_time_max,
+        "databaseDuration" => $data_time_total,
+        "reportPeriod" => $time_total,
+        "desiredValue" => $value,
+        "isGeneratingPercent" => $state
     }
-    a=[1,2,3,4,5]
 
     puts "azazaz"
     genClients(options)
